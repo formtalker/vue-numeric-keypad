@@ -12,7 +12,54 @@ npm i vue-numeric-keypad
 ## Usage
 
 ### Usage with Module
-```html
+
+#### Vue 3 with Composition API using `<script setup>` (Recommended)
+```vue
+<template>
+  <div id="app">
+    <input
+      type="number"
+      :value="value"
+      @click.stop="show = true"
+      readonly
+    />
+    <VueNumericKeypad
+      v-model:value="value"
+      v-model:show="show"
+      :options="options"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
+import VueNumericKeypad from "vue-numeric-keypad";
+
+const value = ref("")
+const show = ref(0)
+// Using reactive for object options
+const options = reactive({
+  keyRandomize: true,
+  randomizeWhenClick: true,
+  fixDeleteKey: false,
+})
+
+const handleDocumentClick = () => {
+  show.value = 0
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleDocumentClick)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleDocumentClick)
+})
+</script>
+```
+
+#### Vue 3 with Composition API using `setup()` function
+```vue
 <template>
   <div id="app">
     <input
@@ -30,7 +77,7 @@ npm i vue-numeric-keypad
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import VueNumericKeypad from "vue-numeric-keypad";
 
 export default {
@@ -43,7 +90,7 @@ export default {
     const show = ref(0)
     const options = ref({
       keyRandomize: true,
-      randomizeClick: true,
+      randomizeWhenClick: true,
       fixDeleteKey: false,
     })
 
@@ -51,20 +98,72 @@ export default {
       show.value = 0
     }
 
+    onMounted(() => {
+      document.addEventListener('click', handleDocumentClick)
+    })
+
+    onBeforeUnmount(() => {
+      document.removeEventListener('click', handleDocumentClick)
+    })
+
     return {
       value,
       show,
-      options,
-      handleDocumentClick
+      options
     }
-  },
-  mounted() {
-    document.addEventListener('click', this.handleDocumentClick)
-  },
-  beforeUnmount() {
-    document.removeEventListener('click', this.handleDocumentClick)
   }
 }
+</script>
+```
+
+#### Vue 3 with Options API
+```vue
+<template>
+  <div id="app">
+    <input
+      type="number"
+      :value="value"
+      @click.stop="show = true"
+      readonly
+    />
+    <VueNumericKeypad
+      v-model:value="value"
+      v-model:show="show"
+      :options="options"
+    />
+  </div>
+</template>
+
+<script>
+import VueNumericKeypad from "vue-numeric-keypad";
+
+export default {
+  name: "App",
+  components: {
+    VueNumericKeypad,
+  },
+  data() {
+    return {
+      value: "",
+      show: 0,
+      options: {
+        keyRandomize: true,
+        randomizeWhenClick: true,
+        fixDeleteKey: false,
+      },
+    };
+  },
+  mounted() {
+    document.addEventListener('click', this.handleDocumentClick);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleDocumentClick);
+  },
+  methods: {
+    handleDocumentClick() {
+      this.show = 0;
+    }
+  }
 };
 </script>
 ```
