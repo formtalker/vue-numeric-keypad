@@ -12,8 +12,8 @@
 					readonly
 				/>
 				<VueNumericKeypad
-					:value.sync="demo1.value"
-					:show.sync="demo1.show"
+					v-model:value="demo1.value"
+					v-model:show="demo1.show"
 					:options="demo1.options"
 				/>
 			</div>
@@ -99,9 +99,9 @@
 					readonly
 				/>
 				<VueNumericKeypad
-					:value.sync="demo2.value"
-					:encryptedValue.sync="demo2.encryptedValue"
-					:show.sync="demo2.show"
+					v-model:value="demo2.value"
+					v-model:encryptedValue="demo2.encryptedValue"
+					v-model:show="demo2.show"
 					:options="demo2.options"
 					:encryptFunc="demo2.encryptFunc"
 				/>
@@ -127,12 +127,14 @@
 	</div>
 </template>
 <script>
+import { ref, reactive, computed, onMounted } from 'vue'
 import VueNumericKeypad from "../src/vue-numeric-keypad";
 import JSEncrypt from "jsencrypt";
 
 const pubKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZppsGrlhwX14a05LraK1hgF7HFz2VTZQWhmHwpbc1S6Ui4nFhJWF7AAtehV+bUdapdBY2WCkcccsB0xR4BfKq6IFzXGfDapF/MKXn3Z0VwLITnhV17G4rQk+KYGKoDrZdyfR3qhrBOu03HLJ3jrCWiHwBahxKbQjnYqv0Lfl5KQIDAQAB';
 // This is part of the demo. In actual use, the private key should not be exposed.
 const priKey = 'MIICXQIBAAKBgQDZppsGrlhwX14a05LraK1hgF7HFz2VTZQWhmHwpbc1S6Ui4nFhJWF7AAtehV+bUdapdBY2WCkcccsB0xR4BfKq6IFzXGfDapF/MKXn3Z0VwLITnhV17G4rQk+KYGKoDrZdyfR3qhrBOu03HLJ3jrCWiHwBahxKbQjnYqv0Lfl5KQIDAQABAoGAKt1YDMHLYx41H11pwvkTpG8uu1EFbOEheCoxIb7RTSq/tBYatEIzZ5EDrDLiOGmuuCLHuR41wodartpOXrD1MHxzKXT/uzfavmtpZLwony2B23ZBcIaUqmlI+WZHZ1w3fdRts/n3WgMUF1+f1M22HPm/scm/v78QP0y8fZU3rh0CQQD9OARUSo9S3Blcfzrw64RRn371JuVz51rAe0fLITRUQ8n4EsgpuM6pslir6XZ8mDrT4468uDvDzYwdh11q9Nz3AkEA3AqUu7qVYzfXg+fWfHHfsnLbRHQr/Yfs5A9uh9TyQhi6Qpa5XZtUCzpiSLxhkri5U1rfOJiv+e/1o9XmezFy3wJAC00tvElbnjoek6dGDSylyjLRKsXipcqknUSjTqibuksQP5cvAdWyu5YvKPURibwNnBli7H9Yg4OwBj1daQGmvwJBALVcAzq3jmk4nWkarK3lLXrnL9I77gYJAjb2gSNzYDkaKGq50A5W9+5JMLjCi6lil10ciN8c+e4G2W8v3cer+gECQQDTCXNbqT/lIELhvCb4w+yitDBzxZRluvDKs18h4oCsSx0x6eKjMLL8SRa086JSZDzexMuSAQjsJRWLZJRuRo1h';
+
 const styles = {
 	app: {
 		display: 'flex',
@@ -176,83 +178,93 @@ const styles = {
 		width: '160px',
 	}
 };
+
 export default {
 	name: "App",
 	components: {
 		VueNumericKeypad,
 	},
-	data() {
-		return {
-			pubKey,
-			priKey, // FOR DEMO
-			styles,
-			codeToggle: false,
-			demo1: {
-				value: "",
-				show: 0,
-				options: {
-					keyRandomize: true,
-					randomizeWhenClick: false,
-					fixDeleteKey: true,
-					fixBlankKey: true,
-					pseudoClick: false,
-					pseudoClickDeleteKey: false,
-					pseudoClickBlankKey: false,
-					stopPropagation: true,
-					vibrate: false,
-					activeButtonDelay: 300,
-					vibratePattern: 200,
-					keyArray: [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, -1],
-					deleteKeyText: 'del',
-					clearKeyText: 'clr',
-				},
+	setup() {
+		const demo1 = reactive({
+			value: "",
+			show: 0,
+			options: {
+				keyRandomize: true,
+				randomizeWhenClick: false,
+				fixDeleteKey: true,
+				fixBlankKey: true,
+				pseudoClick: false,
+				pseudoClickDeleteKey: false,
+				pseudoClickBlankKey: false,
+				stopPropagation: true,
+				vibrate: false,
+				activeButtonDelay: 300,
+				vibratePattern: 200,
+				keyArray: [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, -1],
+				deleteKeyText: 'del',
+				clearKeyText: 'clr',
 			},
-			keyArray1: [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, -1],
-			keyArray2: [1, 2, 3, 4, 5, 6, 7, 8, 9, -1, 0, -2],
-			keyArray3: [-1, -1, -1, -2, -2, -2, '', '', '', 0, 0, 0],
-			demo2: {
-				value: "",
-				show: 0,
-				encryptedValue: [],
-				encryptFunc: s => this.demo2.crypt.encrypt(s),
-				options: {
-					encrypt: true,
-					encryptedChar: '@',
-					pseudoClick: true,
-					vibrate: true,
-					keyArray: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -1, -2],
-				},
-				crypt: new JSEncrypt(),
-				// FOR DEMO
-				encValue: '',
-				decrypt: new JSEncrypt(),
-				toggle1: false,
-				toggle2: false,
+		})
+
+		const keyArray1 = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, -1])
+		const keyArray2 = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, -1, 0, -2])
+		const keyArray3 = ref([-1, -1, -1, -2, -2, -2, '', '', '', 0, 0, 0])
+
+		const demo2 = reactive({
+			value: "",
+			show: 0,
+			encryptedValue: [],
+			encryptFunc: null,
+			options: {
+				encrypt: true,
+				encryptedChar: '@',
+				pseudoClick: true,
+				vibrate: true,
+				keyArray: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -1, -2],
 			},
-		};
-	},
-	computed: {
-		decryptedValue: function () {
-			const o = this.demo2;
-			return o.decrypt.decrypt(o.encValue);
-		},
-	},
-	methods: {
-		copyText: e => {
-			e.target.setSelectionRange(0, 999999);
+			crypt: new JSEncrypt(),
+			// FOR DEMO
+			encValue: '',
+			decrypt: new JSEncrypt(),
+			toggle1: false,
+			toggle2: false,
+		})
+
+		demo2.encryptFunc = s => demo2.crypt.encrypt(s)
+
+		const decryptedValue = computed(() => {
+			return demo2.decrypt.decrypt(demo2.encValue)
+		})
+
+		const copyText = (e) => {
+			e.target.setSelectionRange(0, 999999)
 			if (typeof document.execCommand === 'function') {
-				document.execCommand('copy');
-				e.target.nextElementSibling.innerText = 'Copyed!';
+				document.execCommand('copy')
+				e.target.nextElementSibling.innerText = 'Copyed!'
 			}
-		},
-	},
-	created() {
-		this.demo2.crypt.setKey(pubKey);
-		this.demo2.decrypt.setKey(priKey);
-		document.addEventListener('click', function () {
-			this.demo1.show = false;
-			this.demo2.show = false;
-		}.bind(this));
+		}
+
+		onMounted(() => {
+			demo2.crypt.setKey(pubKey)
+			demo2.decrypt.setKey(priKey)
+			document.addEventListener('click', function () {
+				demo1.show = false
+				demo2.show = false
+			})
+		})
+
+		return {
+			styles,
+			demo1,
+			demo2,
+			keyArray1,
+			keyArray2,
+			keyArray3,
+			decryptedValue,
+			copyText,
+			pubKey,
+			priKey
+		}
 	}
 };
 </script>

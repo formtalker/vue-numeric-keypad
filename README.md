@@ -1,6 +1,6 @@
-# Vue Numeric Keypad [![npm](https://img.shields.io/npm/v/vue-numeric-keypad)](https://www.npmjs.com/package/vue-numeric-keypad) [![npm dev dependency version](https://img.shields.io/npm/dependency-version/vue-numeric-keypad/dev/vue)](https://www.npmjs.com/package/vue/v/2.6.14)
-The virtual numeric keypad that can be used on Vue.
-It was produced in NPM v6.14.13 and Vue v2.6.14 environments.
+# Vue Numeric Keypad [![npm](https://img.shields.io/npm/v/vue-numeric-keypad)](https://www.npmjs.com/package/vue-numeric-keypad) [![npm dev dependency version](https://img.shields.io/npm/dependency-version/vue-numeric-keypad/dev/vue)](https://www.npmjs.com/package/vue/v/3.3.0)
+The virtual numeric keypad that can be used on Vue 3.
+It was updated to support Vue 3.3.0+ environments with Composition API.
 By default, keys are randomly arranged and you can specify various settings using options.
 
 ## Installation
@@ -22,53 +22,69 @@ npm i vue-numeric-keypad
       readonly
     />
     <VueNumericKeypad
-      :value.sync="value"
-      :show.sync="show"
+      v-model:value="value"
+      v-model:show="show"
       :options="options"
     />
   </div>
 </template>
 
 <script>
-import  VueNumericKeypad  from "vue-numeric-keypad";
+import { ref } from 'vue'
+import VueNumericKeypad from "vue-numeric-keypad";
 
-export  default {
-  name:  "App",
+export default {
+  name: "App",
   components: {
     VueNumericKeypad,
   },
-  data() {
+  setup() {
+    const value = ref("")
+    const show = ref(0)
+    const options = ref({
+      keyRandomize: true,
+      randomizeClick: true,
+      fixDeleteKey: false,
+    })
+
+    const handleDocumentClick = () => {
+      show.value = 0
+    }
+
     return {
-      value:  "",
-      show:  0,
-      options: {
-        keyRandomize:  true,
-        randomizeClick:  true,
-        fixDeleteKey:  false,
-      },
-    };
+      value,
+      show,
+      options,
+      handleDocumentClick
+    }
   },
-  created() {
-    document.addEventListener('click', function () {
-      this.show = 0;
-    }.bind(this));
+  mounted() {
+    document.addEventListener('click', this.handleDocumentClick)
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleDocumentClick)
   }
+}
 };
 </script>
 ```
 
 ### Usage with CDN
 ```html
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@1.2.3/dist/vue-numeric-keypad.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-numeric-keypad@latest/dist/vue-numeric-keypad.min.js"></script>
 <script>
-  Vue.use(VueNumericKeypad);
-  new Vue({ ... });
+  const { createApp } = Vue;
+  createApp({
+    setup() {
+      // Your component logic here
+    }
+  }).use(VueNumericKeypad).mount('#app');
 </script>
 ...
 <vue-numeric-keypad
-  :value.sync="value"
-  :show.sync="show"
+  v-model:value="value"
+  v-model:show="show"
   :options="options"
 />
 ```
@@ -79,14 +95,15 @@ https://chae-sumin.github.io/vue-numeric-keypad/
 ## Props and Options
 
 The props have to deliver changing values or objects, so bind them with `v-bind:` or `:`.
-In addition, `value` and `show`, `encryptedValue` require two-way binding, so add the `.sync` modifier.
+In addition, `value` and `show`, `encryptedValue` require two-way binding, so use `v-model` directive.
+
 ### props
 |property|Description|Required|type|
 |-|-|-|-|
 |`id`|ID of the keypad.|False|String|
-|`:value` \| `:value.sync`|The value to change when entering the keypad.|True|String \| <br> String variable|
-|`:encryptedValue.sync` \| `:encrypted-value.sync`|Array in which encrypted values will be entered<br>when `options.encrypt: true`.|False|Array&lt;string&gt; variable|
-|`:show.sync`|Bind to the v-show on the keypad. And adjust the font size and randomize the key arrangement.|True|Boolean variable \|<br> Number variable |
+|`v-model:value`|The value to change when entering the keypad.|True|String \| <br> String variable|
+|`v-model:encryptedValue` \| `v-model:encrypted-value`|Array in which encrypted values will be entered<br>when `options.encrypt: true`.|False|Array&lt;string&gt; variable|
+|`v-model:show`|Bind to the v-show on the keypad. And adjust the font size and randomize the key arrangement.|True|Boolean variable \|<br> Number variable |
 |`:encryptFunc` \| `:encrypt-func`|A function that encrypts the input<br>when `options.encrypt: true`.|False|Function|
 |`:options`|Set several values.<br>(details can be found below)|False|Object|
 ### options
@@ -197,13 +214,34 @@ In addition, `value` and `show`, `encryptedValue` require two-way binding, so ad
  - You can use `Slot`
  ```html
  <VueNumericKeypad
-      :value.sync="value"
-      :show.sync="show"
+      v-model:value="value"
+      v-model:show="show"
       :options="options"
 >
   <div>Something you want</div>
 </VueNumericKeypad>
  ```
+
+## Migration from Vue 2 to Vue 3
+
+If you're migrating from Vue 2, here are the main changes:
+
+### Syntax Changes
+- Replace `.sync` modifier with `v-model:`
+  ```html
+  <!-- Vue 2 -->
+  <VueNumericKeypad :value.sync="value" :show.sync="show" />
+  
+  <!-- Vue 3 -->
+  <VueNumericKeypad v-model:value="value" v-model:show="show" />
+  ```
+
+### Component Registration
+- Vue 2: `Vue.use(VueNumericKeypad)`
+- Vue 3: `app.use(VueNumericKeypad)`
+
+### Composition API (Recommended)
+Use Composition API for better TypeScript support and modern Vue development patterns.
 
 ## License
 
