@@ -386,8 +386,8 @@ export default {
       } else return key;
     },
     resize() {
-      this.cellWidth = this.$refs.button[0].offsetWidth;
-      this.cellHeight = this.$refs.button[0].offsetHeight;
+      this.cellWidth = this.$refs.button[0]?.offsetWidth;
+      this.cellHeight = this.$refs.button[0]?.offsetHeight;
       const sheet = this.defaultStyleSheet.sheet;
       if (sheet && this.keypadStylesIndex !== null) {
         sheet.deleteRule(0);
