@@ -6,7 +6,7 @@ By default, keys are randomly arranged and you can specify various settings usin
 ## Installation
 
 ```bash
-npm i vue-numeric-keypad
+npm i @formtalker/vue-numeric-keypad
 ```
 
 ## Usage

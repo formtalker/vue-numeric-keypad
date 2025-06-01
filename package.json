@@ -1,6 +1,6 @@
 {
-  "name": "vue-numeric-keypad",
-  "version": "1.2.6",
+  "name": "@formtalker/vue-numeric-keypad",
+  "version": "1.0.0",
   "description": "The virtual numeric keypad that can be used on Vue.",
   "type": "module",
   "main": "dist/vue-numeric-keypad.ssr.js",
@@ -52,7 +52,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Chae-Sumin/vue-numeric-keypad.git"
+    "url": "git+https://github.com/formtalker/vue-numeric-keypad.git"
   },
   "keywords": [
     "vue",
@@ -73,7 +73,7 @@
   "author": "Chae-Sumin(cotnmin)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Chae-Sumin/vue-numeric-keypad/issues"
+    "url": "https://github.com/formtalker/vue-numeric-keypad/issues"
   },
-  "homepage": "https://github.com/Chae-Sumin/vue-numeric-keypad#readme"
+  "homepage": "https://github.com/formtalker/vue-numeric-keypad#readme"
 }
