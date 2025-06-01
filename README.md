@@ -1,4 +1,4 @@
-# Vue Numeric Keypad <!-- [![npm](https://img.shields.io/npm/v/vue-numeric-keypad)](https://www.npmjs.com/package/vue-numeric-keypad) [![npm dev dependency version](https://img.shields.io/npm/dependency-version/vue-numeric-keypad/dev/vue)](https://www.npmjs.com/package/vue/v/3.3.0) -->
+# Vue Numeric Keypad [![npm](https://img.shields.io/npm/v/@formtalker/vue-numeric-keypad)](https://img.shields.io/npm/v/@formtalker/vue-numeric-keypad) [![npm dev dependency version](https://img.shields.io/npm/dependency-version/@formtalker/vue-numeric-keypad/dev/vue)](https://www.npmjs.com/package/vue/v/3.3.0)
 The virtual numeric keypad that can be used on Vue 3.
 It was updated to support Vue 3.3.0+ environments with Composition API.
 By default, keys are randomly arranged and you can specify various settings using options.
